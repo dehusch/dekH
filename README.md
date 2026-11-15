@@ -1,12 +1,12 @@
-# Deck Lite 0.4.2
+# dekH Lite 0.4.2
 
-Deck is an experimental x86-64 operating system with its own C/Assembly
+dekH is an experimental x86-64 operating system with its own C/Assembly
 kernel and BIOS loader. Boot starts init, password login and a protected
 user shell. This release adds HTTPS downloads with TLS 1.2 certificate validation. External packages and Vim are not available.
 
 ## Start
 
-Open `Abrir-Deck.desktop` to start the installed `Deck-Lite-042` VM.
+Open `Abrir-dekH.desktop` to start the installed `dekH-Lite-042` VM.
 Existing accounts, passwords and personal files are migrated from your 0.4.0
 disk. The original 0.4.0 VM remains available through `old/Deck0.4.0_20261115_071927/Abrir-Deck-040.desktop`.
 On a fresh installation, choose and confirm the root password (8–64 bytes).
@@ -18,20 +18,20 @@ work. `keymap de` and `keymap us` switch layouts.
 
 ## Storage and file tools
 
-DeckFS v3 supports **256 entries and 65536 bytes per file**. Directories also
+dekHFS v3 supports **256 entries and 65536 bytes per file**. Directories also
 consume entries. This is a bounded snapshot filesystem, not a general-purpose
 block allocator; `df` reports usage. The VM disk must be at least 64 MiB.
 
 ```text
 mkdir work
-echo "Hello Deck" > work/hello
+echo "Hello dekH" > work/hello
 cp -r work backup
 mv backup archive
 ls -l archive
 cat archive/hello
 ```
 
-The copied file contains `Hello Deck`. `ls -l` shows permissions, owner,
+The copied file contains `Hello dekH`. `ls -l` shows permissions, owner,
 primary group ID and size. Recursive copy validates the whole tree before
 creating anything; permission, capacity or path failures leave no partial tree.
 Directory moves update all descendant paths together. Files/directories in use
@@ -88,12 +88,12 @@ substitution. `rescue` opens the kernel console for interactive root sessions.
 
 ## Images, installation and upgrades
 
-ISO: `dist/Deck-Lite-0.4.2-amd64.iso`. Use BIOS, 128 MiB RAM, one CPU,
+ISO: `dist/dekH-Lite-0.4.2-amd64.iso`. Use BIOS, 128 MiB RAM, one CPU,
 IDE PIIX4 and a new 64 MiB virtual disk. The installer command is `install ada0`;
 it requires typing `ERASE ada0`. Shut down, detach the ISO and boot the disk.
 Changes on the uninstalled live ISO are volatile.
 
-DeckFS v3 is not directly compatible with v2 snapshots. The offline migration
+dekHFS v3 is not directly compatible with v2 snapshots. The offline migration
 tool reads a copy of the v2 disk, verifies the latest valid snapshot and writes
 a separate v3 disk. It retains accounts, homes, ownership, permissions and
 custom files while refreshing known base programs. Never apply a raw format
@@ -106,7 +106,7 @@ Requires Clang/LLD, llvm-objcopy, makefs, Perl and VirtualBox for VM tests.
 ```sh
 make
 make test
-sh scripts/test-session.sh Deck-Lite-042-session-check
+sh scripts/test-session.sh dekH-Lite-042-session-check
 ```
 
 Storage-specific VM regressions are in `scripts/test-storage-vm.pl`; they use
@@ -138,7 +138,7 @@ prototype tools, not full POSIX replacements. See
 
 ## Networking and background jobs (0.4.0)
 
-The installed Deck-Lite-042 VM uses Intel 82540EM bridged to re0. DHCP
+The installed dekH-Lite-042 VM uses Intel 82540EM bridged to re0. DHCP
 configures an address on the router's LAN automatically. The portable VM
 creation helper still defaults to NAT.
 
@@ -197,7 +197,7 @@ See [the release notes](old/Deck0.4.2_20261115_071927/docs/RELEASE-0.4.2.md) for
 
 The development build includes `/bin/bsdprobe`, a static libc-free FreeBSD 15
 AMD64 program built with the host's standard headers and linker. Basic syscall,
-file I/O and mixed Deck/FreeBSD pipeline support are implemented. This does not
+file I/O and mixed dekH/FreeBSD pipeline support are implemented. This does not
 enable FreeBSD packages or Vim. See [scope and tests](docs/FREEBSD-COMPATIBILITY.md).
 
 The next libc preparation step adds private anonymous memory and per-process
@@ -205,7 +205,7 @@ FS/TLS bases, tested with a 10 MiB allocation workload. Normally linked FreeBSD
 utilities still need larger-file storage and additional ELF/runtime support.
 See the [libc dependency audit and remaining work](docs/FREEBSD-LIBC-PREPARATION.md).
 
-## Development: DeckFS v4 larger files
+## Development: dekHFS v4 larger files
 
 The development build now supports 1 MiB files in a shared 16 MiB data pool,
 with v4 snapshots and an offline v3-to-v4 migrator that preserves all entries.
