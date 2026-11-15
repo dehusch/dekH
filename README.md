@@ -8,7 +8,7 @@ user shell. This release adds HTTPS downloads with TLS 1.2 certificate validatio
 
 Open `Abrir-Deck.desktop` to start the installed `Deck-Lite-042` VM.
 Existing accounts, passwords and personal files are migrated from your 0.4.0
-disk. The original 0.4.0 VM remains available through `Abrir-Deck-040.desktop`.
+disk. The original 0.4.0 VM remains available through `old/Deck0.4.0_20261115_071927/Abrir-Deck-040.desktop`.
 On a fresh installation, choose and confirm the root password (8–64 bytes).
 Typing passwords is hidden. Initial root setup saves automatically on disk.
 
@@ -112,8 +112,8 @@ sh scripts/test-session.sh Deck-Lite-042-session-check
 Storage-specific VM regressions are in `scripts/test-storage-vm.pl`; they use
 migrated disposable fixture accounts, not real credentials. They check large
 files, full filesystem handling, directory operations, the editor, permissions
-and reboot persistence. See [release notes](docs/RELEASE-0.4.2.md) for evidence
-and [the English test guide](docs/TESTING-0.3.1.md) for a repeatable procedure.
+and reboot persistence. See [release notes](old/Deck0.4.2_20261115_071927/docs/RELEASE-0.4.2.md) for evidence
+and [the English test guide](old/Deck0.3.1_20261115_071927/docs/TESTING-0.3.1.md) for a repeatable procedure.
 
 Limits still include eight accounts, eight task slots, no supplementary
 groups, no symlinks, no general VFS/mount support, no UEFI/USB, and no
@@ -134,7 +134,7 @@ cat words | tee copied | wc -l
 Input is bounded to 64 KiB; sort/uniq additionally allow 4096 lines. Grep uses
 literal matching, sorting is bytewise, and wc counts UTF-8 bytes. These are
 prototype tools, not full POSIX replacements. See
-[the 0.3.2 release notes](docs/RELEASE-0.3.2.md) for options and acceptance tests.
+[the 0.3.2 release notes](old/Deck0.3.2_20261115_071927/docs/RELEASE-0.3.2.md) for options and acceptance tests.
 
 ## Networking and background jobs (0.4.0)
 
@@ -156,7 +156,7 @@ Ctrl-C cancels the foreground task. `kill PID` terminates an owned process;
 `wait [PID]` waits for background jobs. Logout cleans up session tasks.
 `dhclient` restarts DHCP as root. External ping by IP and Google hostname passed after switching the installed
 VM from NAT to bridge mode. The NAT path on this host still times out. See the
-[0.4.0 release notes](docs/RELEASE-0.4.0.md) for limits and test procedures.
+[0.4.0 release notes](old/Deck0.4.0_20261115_071927/docs/RELEASE-0.4.0.md) for limits and test procedures.
 
 ## HTTP downloads (0.4.1)
 
@@ -173,7 +173,7 @@ orderly EOF. Downloads are limited to 65536 bytes. A destination passed with
 `-o FILE` is replaced only after a complete valid response; failures and Ctrl-C
 preserve an existing file. File permissions and explicit disk sync still apply.
 HTTPS is supported with certificate validation; redirects and compression are not implemented. See the
-[0.4.2 release notes](docs/RELEASE-0.4.2.md) for socket APIs, limits and tests.
+[0.4.2 release notes](old/Deck0.4.2_20261115_071927/docs/RELEASE-0.4.2.md) for socket APIs, limits and tests.
 
 ## HTTPS downloads (0.4.2)
 
@@ -191,7 +191,7 @@ an existing destination when using `-o FILE`.
 
 This bounded TLS 1.2 client has no TLS 1.3, revocation checks, IP-address
 certificate identities or full browser PKI policies. Some sites are unsupported.
-See [the release notes](docs/RELEASE-0.4.2.md) for protocol, trust and test details.
+See [the release notes](old/Deck0.4.2_20261115_071927/docs/RELEASE-0.4.2.md) for protocol, trust and test details.
 
 ## Experimental FreeBSD reference compatibility
 
@@ -212,5 +212,8 @@ with v4 snapshots and an offline v3-to-v4 migrator that preserves all entries.
 The installed 0.4.2 VM still uses its original v3 disk. Build output names have
 not yet changed; do not boot the development kernel against an original v3
 disk as an in-place upgrade. See [migration, limits and tests](docs/STORAGE-V4.md).
-Exec loading, editor, fetch and atomic replacement retain their existing
-64 KiB limits. Normal FreeBSD libc programs still cannot run.
+The editor, fetch and atomic replacement retain their existing 64 KiB
+operation limits. The development loader now runs the exact
+FreeBSD static-libc `true` and `false` binaries from a disposable v4 fixture;
+see [runtime scope and tests](docs/FREEBSD-LIBC-RUNTIME.md). This is not general
+FreeBSD package compatibility.
