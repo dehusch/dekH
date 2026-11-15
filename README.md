@@ -192,3 +192,25 @@ an existing destination when using `-o FILE`.
 This bounded TLS 1.2 client has no TLS 1.3, revocation checks, IP-address
 certificate identities or full browser PKI policies. Some sites are unsupported.
 See [the release notes](docs/RELEASE-0.4.2.md) for protocol, trust and test details.
+
+## Experimental FreeBSD reference compatibility
+
+The development build includes `/bin/bsdprobe`, a static libc-free FreeBSD 15
+AMD64 program built with the host's standard headers and linker. Basic syscall,
+file I/O and mixed Deck/FreeBSD pipeline support are implemented. This does not
+enable FreeBSD packages or Vim. See [scope and tests](docs/FREEBSD-COMPATIBILITY.md).
+
+The next libc preparation step adds private anonymous memory and per-process
+FS/TLS bases, tested with a 10 MiB allocation workload. Normally linked FreeBSD
+utilities still need larger-file storage and additional ELF/runtime support.
+See the [libc dependency audit and remaining work](docs/FREEBSD-LIBC-PREPARATION.md).
+
+## Development: DeckFS v4 larger files
+
+The development build now supports 1 MiB files in a shared 16 MiB data pool,
+with v4 snapshots and an offline v3-to-v4 migrator that preserves all entries.
+The installed 0.4.2 VM still uses its original v3 disk. Build output names have
+not yet changed; do not boot the development kernel against an original v3
+disk as an in-place upgrade. See [migration, limits and tests](docs/STORAGE-V4.md).
+Exec loading, editor, fetch and atomic replacement retain their existing
+64 KiB limits. Normal FreeBSD libc programs still cannot run.
