@@ -9,6 +9,10 @@ user shell. This release adds HTTPS downloads with TLS 1.2 certificate validatio
 Open `Abrir-dekH.desktop` to start the installed `dekH-Lite-042` VM.
 Existing accounts, passwords and personal files are migrated from your 0.4.0
 disk. The original 0.4.0 VM remains available through `old/Deck0.4.0_20261115_071927/Abrir-Deck-040.desktop`.
+The active VM uses the rebranded `system-dekh.vdi`; its previous
+`system-prompt.vdi` remains detached as a rollback copy. The internal
+`DECKFS4` disk signature is retained for format compatibility and is not the
+user-facing filesystem name.
 On a fresh installation, choose and confirm the root password (8–64 bytes).
 Typing passwords is hidden. Initial root setup saves automatically on disk.
 
@@ -207,7 +211,7 @@ See the [libc dependency audit and remaining work](docs/FREEBSD-LIBC-PREPARATION
 
 ## Development: dekHFS v4 larger files
 
-The development build now supports 1 MiB files in a shared 16 MiB data pool,
+The development build now supports 2 MiB files in a shared 16 MiB data pool,
 with v4 snapshots and an offline v3-to-v4 migrator that preserves all entries.
 The installed 0.4.2 VM still uses its original v3 disk. Build output names have
 not yet changed; do not boot the development kernel against an original v3
@@ -217,3 +221,9 @@ operation limits. The development loader now runs the exact
 FreeBSD static-libc `true` and `false` binaries from a disposable v4 fixture;
 see [runtime scope and tests](docs/FREEBSD-LIBC-RUNTIME.md). This is not general
 FreeBSD package compatibility.
+
+The next development milestone also runs unchanged FreeBSD static-libc
+`echo`, `cat`, `ls`, `mkdir` and `rm` sources and implements a bounded dynamic
+FreeBSD PIE/`PT_INTERP` handoff. The dynamic fixture uses a small audited
+interpreter; FreeBSD `ld-elf.so.1`, shared libc, packages and Vim are not yet
+supported. See [scope and tests](docs/FREEBSD-UTILITIES-DYNAMIC.md).
