@@ -222,8 +222,16 @@ FreeBSD static-libc `true` and `false` binaries from a disposable v4 fixture;
 see [runtime scope and tests](docs/FREEBSD-LIBC-RUNTIME.md). This is not general
 FreeBSD package compatibility.
 
-The next development milestone also runs unchanged FreeBSD static-libc
+The following development milestone also runs unchanged FreeBSD static-libc
 `echo`, `cat`, `ls`, `mkdir` and `rm` sources and implements a bounded dynamic
 FreeBSD PIE/`PT_INTERP` handoff. The dynamic fixture uses a small audited
-interpreter; FreeBSD `ld-elf.so.1`, shared libc, packages and Vim are not yet
-supported. See [scope and tests](docs/FREEBSD-UTILITIES-DYNAMIC.md).
+interpreter. See [scope and tests](docs/FREEBSD-UTILITIES-DYNAMIC.md).
+
+The current development milestone adds unchanged FreeBSD dynamic versions of
+those five utilities, the system `ld-elf.so.1`, shared `libc.so.7`,
+`libsys.so.7` and the two direct `ls` libraries, backed by bounded eager
+private file mappings. Packages and Vim
+are not yet supported. See [shared runtime scope and tests](docs/FREEBSD-SHARED-RUNTIME.md).
+The same development fixture now includes dynamic `cp`, `mv`, `pwd`, `sleep`
+and `printf` with bounded rename, timed wait, signal-registration and terminal
+query support.
