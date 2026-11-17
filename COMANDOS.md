@@ -1,252 +1,249 @@
-# Catálogo de comandos do dekH
+# dekH command catalogue
 
-Este documento lista os comandos existentes no desenvolvimento atual do
-dekH 0.4.2. Há quatro grupos diferentes:
+This document lists the commands available in the current dekH 0.4.2
+development tree. They belong to four distinct groups:
 
-1. comandos normais presentes no sistema-base;
-2. comandos internos do shell;
-3. comandos do console de recuperação e executáveis de diagnóstico;
-4. comandos FreeBSD presentes somente nas imagens experimentais de teste.
+1. normal base-system commands;
+2. shell built-ins;
+3. recovery and diagnostic commands;
+4. FreeBSD compatibility commands installed only in disposable test images.
 
-Os comandos `bsd*` e `dyn*` ainda não estão instalados na VM principal da
-release. Eles são adicionados à fixture dekHFS v4 criada por
-`scripts/test-freebsd-libc.sh`.
+The `bsd*` and `dyn*` commands are not installed in the release VM. They are
+test fixtures created by `scripts/test-freebsd-libc.sh` and are documented
+separately below so that they are not confused with native dekH commands.
 
-## Shell e controle da sessão
+## Shell and session control
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `sh [ARQUIVO]` | Shell interativo ou executor de script | Interpreta comandos, scripts linha a linha, aspas, escapes, variáveis, pipelines e redirecionamentos. |
-| `help` | `help` | Mostra o resumo dos comandos e recursos do shell. |
-| `man COMANDO` | `man ls` | Exibe uma página curta para os comandos documentados. `man -k` lista as páginas disponíveis. |
-| `cd [CAMINHO]` | `cd /tmp` | Altera o diretório atual. Sem argumento usa `$HOME`. |
-| `export NOME=VALOR` | `export PATH=/bin` | Cria ou altera uma variável de ambiente. |
-| `unset NOME` | `unset TEMP` | Remove uma variável de ambiente. |
-| `status` | `status` | Mostra o código de saída do último comando. |
-| `exit [CÓDIGO]` | `exit 0` | Encerra o shell. No shell de login, encerra a sessão. |
-| `logout [CÓDIGO]` | `logout` | Equivalente a `exit`. |
-| `jobs` | `jobs` | Lista os trabalhos iniciados em segundo plano pelo shell. |
-| `fg [PID]` | `fg` | Traz o trabalho indicado, ou o mais recente, para primeiro plano. |
-| `wait [PID]` | `wait` | Aguarda um trabalho específico ou todos os trabalhos pendentes. |
-| `rescue` | `rescue` | Solicita o console de recuperação autenticado como root. |
-| `NOME=VALOR` | `TEMP=/tmp` | Atribui uma variável diretamente no shell. |
-| `COMANDO &` | `sleep 5 &` | Executa o comando em segundo plano. |
+| `sh [FILE]` | `sh backup.sh` | Runs the interactive shell or a line-oriented shell script. |
+| `help` | `help` | Prints the shell command and feature summary. |
+| `man COMMAND` | `man ls` | Displays a compact manual page. `man -k` lists the available pages. |
+| `cd [PATH]` | `cd /tmp` | Changes the working directory. With no argument, uses `$HOME`. |
+| `export NAME=VALUE` | `export PATH=/bin` | Creates or changes an environment variable. |
+| `unset NAME` | `unset TEMP` | Removes an environment variable. |
+| `status` | `status` | Prints the previous command's exit status. |
+| `exit [STATUS]` | `exit 0` | Exits the shell and, from a login shell, ends the session. |
+| `logout [STATUS]` | `logout` | Alias of `exit`. |
+| `jobs` | `jobs` | Lists jobs started in the background by this shell. |
+| `fg [PID]` | `fg` | Brings the selected or most recent job to the foreground. |
+| `wait [PID]` | `wait` | Waits for one job or all pending jobs. |
+| `rescue` | `rescue` | Requests the authenticated root recovery console. |
+| `NAME=VALUE` | `TEMP=/tmp` | Assigns an environment variable directly. |
+| `COMMAND &` | `sleep 5 &` | Runs a command in the background. |
 
-O shell aceita pipelines de até três estágios e os redirecionamentos `<`,
-`>`, `>>`, `2>`, `2>&1`. A expansão disponível inclui `$NOME`, `${NOME}` e
-`$?`.
+The shell supports pipelines of up to three stages, quoting and escaping,
+`$NAME`, `${NAME}`, `$?`, and the redirections `<`, `>`, `>>`, `2>`, and
+`2>&1`.
 
-## Arquivos e diretórios
+## Files and directories
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `echo [TEXTO...]` | `echo olá` | Imprime os argumentos, separados por espaços, e uma quebra de linha. |
-| `pwd` | `pwd` | Mostra o diretório atual. |
-| `ls [-l] [CAMINHO]` | `ls -l /etc` | Lista um diretório ou uma entrada. `-l` mostra tipo, modo, proprietário e tamanho. |
-| `cat [ARQUIVO...]` | `cat /etc/hostname` | Copia arquivos para a saída; sem arquivo, ou com `-`, lê a entrada padrão. |
-| `cp [-r] ORIGEM DESTINO` | `cp a b` | Copia um arquivo com substituição atômica. `-r` realiza cópia transacional de uma árvore. |
-| `mv ORIGEM DESTINO` | `mv antigo novo` | Renomeia ou move uma entrada dentro do dekHFS. |
-| `mkdir DIRETÓRIO` | `mkdir dados` | Cria um diretório. |
-| `rmdir DIRETÓRIO` | `rmdir dados` | Remove um diretório vazio. |
-| `rm ARQUIVO` | `rm temporário` | Remove um arquivo regular. Não remove diretórios. |
-| `touch ARQUIVO` | `touch novo` | Cria um arquivo vazio se ele ainda não existir. |
-| `chmod MODO CAMINHO` | `chmod 600 segredo` | Define permissões usando um modo octal. |
-| `env [NOME]` | `env PATH` | Sem argumento lista o ambiente; com um nome mostra seu valor. |
-| `printenv [NOME]` | `printenv HOME` | Alias funcional de `env`. |
-| `edit ARQUIVO` | `edit notas.txt` | Abre o editor de texto linha a linha do dekH. |
+| `echo [TEXT...]` | `echo hello` | Writes its arguments separated by spaces and adds a newline. |
+| `pwd` | `pwd` | Prints the current working directory. |
+| `ls [-l] [PATH]` | `ls -l /etc` | Lists a directory or entry. `-l` includes type, mode, owner, and size. |
+| `cat [FILE...]` | `cat /etc/hostname` | Copies files to standard output. With no file or `-`, reads standard input. |
+| `cp [-r] SOURCE DESTINATION` | `cp a b` | Atomically copies one file. `-r` performs a transactional tree copy. |
+| `mv SOURCE DESTINATION` | `mv old new` | Renames or moves a dekHFS entry. |
+| `mkdir DIRECTORY` | `mkdir data` | Creates a directory. |
+| `rmdir DIRECTORY` | `rmdir data` | Removes an empty directory. |
+| `rm FILE` | `rm temporary` | Removes a regular file; it does not remove directories. |
+| `touch FILE` | `touch new` | Creates an empty file if it does not already exist. |
+| `chmod MODE PATH` | `chmod 600 secret` | Sets permissions using an octal mode. |
+| `env [NAME]` | `env PATH` | Lists the environment or prints one variable. |
+| `printenv [NAME]` | `printenv HOME` | Functional alias of `env`. |
+| `edit FILE` | `edit notes.txt` | Opens the native line-oriented text editor. |
 
-No editor, `a` acrescenta texto, `i N` insere antes da linha, `d N` remove a
-linha, `p` imprime, `w` salva, `q` sai se não houver alterações e `q!`
-descarta as alterações. Uma linha contendo apenas `.` termina uma inserção.
+Editor commands are `a` to append, `i N` to insert before a line, `d N` to
+delete a line, `p` to print, `w` to save, `q` to quit when unchanged, and
+`q!` to discard changes. A single dot ends inserted text.
 
-## Processos
+## Processes
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `ps` | `ps` | Lista PID, UID, estado e nome dos processos ativos. |
-| `sleep SEGUNDOS` | `sleep 2` | Suspende a tarefa por 0 a 86400 segundos sem consumir o orçamento normal de CPU. |
-| `kill PID` | `kill 12` | Solicita o encerramento do processo indicado, respeitando propriedade e privilégios. |
+| `ps` | `ps` | Lists the PID, UID, state, and name of active processes. |
+| `sleep SECONDS` | `sleep 2` | Suspends a task for 0 through 86400 seconds. |
+| `kill PID` | `kill 12` | Requests termination of a process, subject to ownership and privilege checks. |
 
-O sistema limita cada processo a três segundos de CPU e mantém até oito
-contextos de tarefa. Espera por entrada, pipe ou timer não consome esse limite
-como execução ativa.
+The kernel supports eight task contexts and a three-second user CPU budget per
+process. Waiting for input, a pipe, or a timer does not count as active CPU
+execution.
 
-## Utilitários de texto
+## Text utilities
 
-Todos aceitam no máximo 65536 bytes de entrada; `-` representa a entrada
-padrão. A ordenação e as contagens operam sobre bytes UTF-8, sem uma biblioteca
-completa de locale ou expressões regulares.
+These commands accept at most 65536 input bytes. A path of `-` means standard
+input. Matching and ordering are byte-oriented; there is no regular-expression
+or full locale engine.
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `grep [-n] [-i] [--] TEXTO [ARQUIVO]` | `grep -n root /etc/passwd` | Imprime linhas que contêm literalmente o texto. `-i` ignora caixa ASCII. |
-| `head [-n N] [ARQUIVO]` | `head -n 5 notas` | Imprime as primeiras linhas; o padrão é 10. |
-| `tail [-n N] [ARQUIVO]` | `tail -n 5 notas` | Imprime as últimas linhas; o padrão é 10. |
-| `wc [-l|-w|-c] [ARQUIVO]` | `wc -l notas` | Conta linhas, palavras ou bytes. Sem opção mostra as três contagens. |
-| `sort [-r] [ARQUIVO]` | `sort -r nomes` | Ordena linhas por bytes; `-r` inverte a ordem. |
-| `uniq [-c] [ARQUIVO]` | `uniq -c nomes` | Junta linhas adjacentes iguais; `-c` mostra a quantidade. |
-| `tee [-a] ARQUIVO` | `comando | tee saída` | Copia a entrada para a saída e para um arquivo. `-a` acrescenta. |
+| `grep [-n] [-i] [--] TEXT [FILE]` | `grep -n root /etc/passwd` | Prints lines containing literal text. `-i` folds ASCII case. |
+| `head [-n N] [FILE]` | `head -n 5 notes` | Prints the first lines; the default is ten. |
+| `tail [-n N] [FILE]` | `tail -n 5 notes` | Prints the last lines; the default is ten. |
+| `wc [-l|-w|-c] [FILE]` | `wc -l notes` | Counts lines, words, or bytes. With no option, prints all three. |
+| `sort [-r] [FILE]` | `sort -r names` | Sorts lines by byte value; `-r` reverses the order. |
+| `uniq [-c] [FILE]` | `uniq -c names` | Coalesces adjacent equal lines; `-c` prints their counts. |
+| `tee [-a] FILE` | `command | tee output` | Copies standard input to standard output and a file. `-a` appends. |
 
-## Rede e transferências
+## Network and downloads
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `ifconfig` | `ifconfig` | Mostra link, IPv4, máscara, gateway, DNS e contadores da interface Intel 82540EM. |
-| `dhclient` | `dhclient` | Reinicia a configuração DHCP. Exige root. |
-| `nslookup HOST` | `nslookup example.com` | Resolve um nome via DNS e mostra o endereço IPv4. |
-| `ping [-c N] HOST` | `ping -c 3 gateway` | Envia pedidos ICMP e mostra respostas, tempo e resumo. O padrão é quatro pacotes. |
-| `fetch [-o ARQUIVO|-] URL` | `fetch -o página https://example.com/` | Baixa HTTP ou HTTPS. HTTPS valida certificado, hostname e datas; a saída é limitada a 65536 bytes e a substituição do arquivo é atômica. |
+| `ifconfig` | `ifconfig` | Shows link state, IPv4 configuration, DNS, gateway, and Intel 82540EM counters. |
+| `dhclient` | `dhclient` | Restarts DHCP configuration; root is required. |
+| `nslookup HOST` | `nslookup example.com` | Resolves a name through DNS and prints its IPv4 address. |
+| `ping [-c N] HOST` | `ping -c 3 gateway` | Sends ICMP echo requests and prints replies and a summary. The default count is four. |
+| `fetch [-o FILE|-] URL` | `fetch -o page https://example.com/` | Downloads HTTP or HTTPS. HTTPS validates certificates, hostnames, and dates. File replacement is atomic and the response limit is 65536 bytes. |
 
-## Contas e identidade
+## Accounts and identity
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `whoami` | `whoami` | Mostra o nome da conta atual. |
-| `id` | `id` | Mostra UID, nome e GID da conta atual. |
-| `users` | `users` | Lista as contas cadastradas. |
-| `passwd [NOME]` | `passwd` | Altera a senha própria; root também pode alterar a senha de outra conta. |
-| `useradd NOME` | `useradd ana` | Cria uma conta e seu diretório pessoal. Exige root. |
-| `userdel NOME` | `userdel ana` | Remove uma conta conforme as verificações do sistema. Exige root. |
+| `whoami` | `whoami` | Prints the current account name. |
+| `id` | `id` | Prints the current UID, account name, and GID. |
+| `users` | `users` | Lists registered accounts. |
+| `passwd [NAME]` | `passwd` | Changes the current password; root may select another account. |
+| `useradd NAME` | `useradd alice` | Creates an account and home directory; root is required. |
+| `userdel NAME` | `userdel alice` | Removes an account after system checks; root is required. |
 
-O banco atual comporta até oito contas. Alterações tornam-se persistentes
-depois de `sync` em uma instalação em disco.
+The account database currently holds up to eight accounts. Run `sync` to make
+changes persistent on an installed disk.
 
-## Administração e informações do sistema
+## Administration and system information
 
-| Comando | Uso principal | Explicação |
+| Command | Typical use | Description |
 |---|---|---|
-| `sync` | `sync` | Grava uma nova geração dos snapshots verificados do dekHFS. |
-| `install ada0` | `install ada0` | Instala o dekH no disco IDE primário. Deve ser usado somente em disco descartável. |
-| `shutdown -p now` | `shutdown -p now` | Sincroniza, se necessário, e solicita o desligamento da VM. |
-| `reboot` | `reboot` | Sincroniza e reinicia a máquina. |
-| `clear` | `clear` | Limpa a tela. |
-| `uname [-s|-r|-m|-a]` | `uname -a` | Mostra nome do sistema, versão e arquitetura. |
-| `mem` | `mem` | Mostra estado da execução protegida, frames livres e descritores abertos. |
-| `mount` | `mount` | Mostra se `/` usa dekHFS volátil ou snapshots no `ada0`. Montar outros sistemas não é suportado. |
-| `diskinfo` | `diskinfo` | Mostra a detecção e as características do disco IDE. |
-| `keymap de|us` | `keymap de` | Seleciona o teclado alemão ou norte-americano. |
-| `df` | `df` | Mostra entradas usadas, bytes armazenados, limite por arquivo e tipo de persistência. |
-| `hostname [NOME]` | `hostname dekH-lab` | Mostra ou altera o hostname. A alteração é salva em `/etc/hostname`. |
-| `date` | `date` | Mostra a data/hora obtida do relógio de hardware. |
-| `uptime` | `uptime` | Mostra os segundos desde o boot. |
+| `sync` | `sync` | Writes a new verified dekHFS snapshot generation. |
+| `install ada0` | `install ada0` | Installs dekH on the primary IDE disk. Use only a disposable target disk. |
+| `shutdown -p now` | `shutdown -p now` | Synchronizes when necessary and requests VM power-off. |
+| `reboot` | `reboot` | Synchronizes and restarts the machine. |
+| `clear` | `clear` | Clears the display. |
+| `uname [-s|-r|-m|-a]` | `uname -a` | Prints the system name, release, architecture, or all fields. |
+| `mem` | `mem` | Shows protected-execution status, free frames, and open descriptions. |
+| `mount` | `mount` | Reports whether `/` is volatile dekHFS or an `ada0` snapshot. Other mounts are unsupported. |
+| `diskinfo` | `diskinfo` | Shows IDE disk detection and properties. |
+| `keymap de|us` | `keymap de` | Selects the German or US keyboard map. |
+| `df` | `df` | Shows entry use, stored bytes, the per-file limit, and persistence mode. |
+| `hostname [NAME]` | `hostname dekh-lab` | Shows or changes the hostname and updates `/etc/hostname`. |
+| `date` | `date` | Prints the hardware-clock date and time. |
+| `uptime` | `uptime` | Prints seconds elapsed since boot. |
 
-## Programas internos do boot
+## Boot programs
 
-| Caminho | Explicação |
+| Path | Description |
 |---|---|
-| `/sbin/init` | Processo inicial em ring 3. Reinicia o login quando uma sessão termina. |
-| `/bin/login` | Autentica contas, configura `PATH`, `HOME`, `USER` e inicia `/bin/sh`. |
+| `/sbin/init` | Initial ring-3 process. It starts another login after a session ends. |
+| `/bin/login` | Authenticates an account, sets `PATH`, `HOME`, `USER`, and starts `/bin/sh`. |
 
-## Referência FreeBSD incorporada ao sistema-base
+## Embedded FreeBSD reference program
 
-| Comando | Explicação |
+| Command | Description |
 |---|---|
-| `bsdprobe` | ELF AMD64 FreeBSD 15 sem libc usado para validar a ABI FreeBSD, syscalls, arquivos, ambiente, memória anônima e TLS. A opção `--memory` executa a prova de memória. |
+| `bsdprobe` | A libc-free FreeBSD 15 AMD64 ELF used to verify the compatibility ABI, syscalls, files, environment, anonymous memory, and TLS. `--memory` runs its memory workload. |
 
-## Comandos FreeBSD da fixture experimental v4
+## FreeBSD commands in the disposable v4 fixture
 
-Estes comandos são binários FreeBSD inalterados ou fixtures controladas. Eles
-existem na VM descartável de desenvolvimento, não na VM principal da release.
+These are unchanged FreeBSD binaries or controlled compatibility fixtures.
+They are not part of the release VM or the native dekH command set.
 
-### FreeBSD estático
+### Static FreeBSD fixtures
 
-“Estático” significa que o executável contém a libc necessária.
+“Static” means that the executable contains the libc code it needs.
 
-| Comando | Origem e função |
+| Command | Description |
 |---|---|
-| `truebsd` | `/usr/bin/true` FreeBSD; termina com status 0. |
-| `falsebsd` | `/usr/bin/false` FreeBSD; termina com status 1. |
-| `bsdecho` | `echo` FreeBSD estático. |
-| `bsdcat` | `cat` FreeBSD estático. |
-| `bsdls` | `ls` FreeBSD estático. |
-| `bsdmkdir` | `mkdir` FreeBSD estático. |
-| `bsdrm` | `rm` FreeBSD estático. |
-| `bsddyn` | Pequeno PIE de teste com `PT_INTERP`; valida o handoff, a pilha e o vetor auxiliar. |
+| `truebsd` | FreeBSD `true`; exits with status zero. |
+| `falsebsd` | FreeBSD `false`; exits with status one. |
+| `bsdecho` | Static FreeBSD `echo`. |
+| `bsdcat` | Static FreeBSD `cat`. |
+| `bsdls` | Static FreeBSD `ls`. |
+| `bsdmkdir` | Static FreeBSD `mkdir`. |
+| `bsdrm` | Static FreeBSD `rm`. |
+| `bsddyn` | Small controlled PIE/`PT_INTERP` fixture that verifies handoff, stack layout, and auxiliary vectors. |
 
-### FreeBSD dinâmico
+### Dynamically linked FreeBSD fixtures
 
-“Dinâmico” significa que o programa é carregado pelo `ld-elf.so.1` real e usa
-as bibliotecas compartilhadas FreeBSD instaladas na fixture.
+These programs use the real FreeBSD `ld-elf.so.1` and shared libraries stored
+in the disposable fixture.
 
-| Comando | Origem e função |
+| Command | Description |
 |---|---|
-| `dynecho` | `echo` FreeBSD dinâmico. |
-| `dyncat` | `cat` FreeBSD dinâmico. |
-| `dynls` | `ls` FreeBSD dinâmico; também usa `libutil` e `libtinfow`. |
-| `dynmkdir` | `mkdir` FreeBSD dinâmico. |
-| `dynrm` | `rm` FreeBSD dinâmico. |
-| `dyncp` | `cp` FreeBSD dinâmico. |
-| `dynmv` | `mv` FreeBSD dinâmico. |
-| `dynpwd` | `pwd` FreeBSD dinâmico. |
-| `dynsleep` | `sleep` FreeBSD dinâmico, usando o `nanosleep` compatível. |
-| `dynprintf` | `printf` FreeBSD dinâmico. |
+| `dynecho` | Dynamically linked FreeBSD `echo`. |
+| `dyncat` | Dynamically linked FreeBSD `cat`. |
+| `dynls` | Dynamically linked FreeBSD `ls`, including `libutil` and `libtinfow`. |
+| `dynmkdir` | Dynamically linked FreeBSD `mkdir`. |
+| `dynrm` | Dynamically linked FreeBSD `rm`. |
+| `dyncp` | Dynamically linked FreeBSD `cp`. |
+| `dynmv` | Dynamically linked FreeBSD `mv`. |
+| `dynpwd` | Dynamically linked FreeBSD `pwd`. |
+| `dynsleep` | Dynamically linked FreeBSD `sleep`, exercising compatible `nanosleep`. |
+| `dynprintf` | Dynamically linked FreeBSD `printf`. |
 
-## Console de recuperação
+## Recovery console
 
-`rescue` sai do shell de usuário e abre o console root do kernel após a
-autorização da sessão. Ele oferece versões administrativas diretas de vários
-comandos já descritos e mais estes comandos específicos:
+`rescue` leaves the user shell and opens the authenticated kernel root console.
+It provides direct administrative forms of many commands above and adds these
+recovery-specific commands:
 
-| Comando | Explicação |
+| Command | Description |
 |---|---|
-| `dmesg` | Mostra um resumo fixo do boot, kernel, ABI e disco. |
-| `stat CAMINHO` | Mostra tipo, modo, UID, GID e tamanho de uma entrada. |
-| `run PROGRAMA [ARGUMENTOS]` | Executa explicitamente um ELF existente. Nomes sem `/` são procurados em `/bin`. |
-| `halt` | Sincroniza quando necessário e solicita o desligamento, como o caminho de `shutdown`. |
-| `pkg` | Informa explicitamente que o gerenciador de pacotes ainda não está disponível; não instala nada. |
-| `man limitations` | Mostra `/root/README`, com os limites atuais do sistema. |
+| `dmesg` | Prints a fixed summary of the boot, kernel, ABI, and disk state. |
+| `stat PATH` | Prints the entry type, mode, UID, GID, and size. |
+| `run PROGRAM [ARGUMENTS]` | Explicitly runs an existing ELF. A name without `/` is searched in `/bin`. |
+| `halt` | Synchronizes when required and requests power-off. |
+| `pkg` | Reports that package management is unavailable and installs nothing. |
+| `man limitations` | Displays `/root/README` and the current system limitations. |
 
-O console também oferece diretamente `help`, `mem`, `keymap`, `clear`,
-`whoami`, `id`, `pwd`, `uname`, `hostname`, `date`, `uptime`, `diskinfo`, `df`,
-`mount`, `sync`, `install`, `reboot`, `shutdown`, `echo`, `ls`, `cd`, `cat`,
-`cp`, `mv`, `chmod`, `mkdir`, `touch`, `rm` e `rmdir`.
+The recovery console also directly implements `help`, `mem`, `keymap`,
+`clear`, `whoami`, `id`, `pwd`, `uname`, `hostname`, `date`, `uptime`,
+`diskinfo`, `df`, `mount`, `sync`, `install`, `reboot`, `shutdown`, `echo`,
+`ls`, `cd`, `cat`, `cp`, `mv`, `chmod`, `mkdir`, `touch`, `rm`, and `rmdir`.
 
-## Executáveis de diagnóstico e desenvolvimento
+## Development and diagnostic executables
 
-Os programas abaixo são semeados no sistema de desenvolvimento para testar o
-kernel. Eles não devem ser tratados como ferramentas normais de usuário;
-alguns provocam faults de propósito.
+These programs are seeded into development images to test the kernel. They
+are not normal user tools, and several intentionally cause process faults.
 
-| Comando | Finalidade |
+| Command | Purpose |
 |---|---|
-| `hello` | Confirma execução de um programa C em ring 3. |
-| `fault` | Tenta escrever no texto do kernel; o processo deve ser encerrado sem derrubar o kernel. |
-| `badptr` | Valida ponteiros, tamanhos, descritores e syscalls inválidas. |
-| `privileged` | Tenta executar `cli` em ring 3 para testar proteção de instruções privilegiadas. |
-| `spin` | Entra em loop para validar o limite de três segundos de CPU. |
-| `textwrite` | Tenta escrever no segmento de código somente leitura. |
-| `stackexec` | Tenta executar código na pilha NX. |
-| `bss` | Valida BSS zerado e dados graváveis. |
-| `iotest` | Testa abertura, leitura, offsets, descritores e limites da ABI de I/O. |
-| `ttyread` | Testa leitura não bloqueante do terminal. |
-| `ucat` | Implementação de diagnóstico do caminho de leitura/cópia usado por `cat`. |
-| `argtest` | Valida `argc`, `argv`, aspas, argumentos vazios e limites. |
-| `ucp` | Implementação de diagnóstico do caminho de cópia usado por `cp`. |
-| `writetest` | Testa escrita, criação, truncamento, append e erros de acesso. |
-| `copycheck A B` | Compara dois arquivos byte a byte. |
-| `uexec PROGRAMA [ARGS]` | Substitui a imagem atual usando `exec`. |
-| `exectest` | Testa atomicidade de falhas, argumentos e herança de descritores no `exec`. |
-| `execinherit` | Verifica offsets herdados e `close-on-exec`. |
-| `execoom` | Testa rollback de `exec` quando os frames acabam. |
-| `execchain [N]` | Executa uma cadeia de até vinte substituições de imagem. |
-| `childtest` | Testa spawn, status, isolamento, faults e recuperação de recursos de filhos. |
-| `uspawn PROGRAMA [ARGS]` | Executa um filho, aguarda e mostra seu status. |
-| `waittest` | Testa leitura bloqueante, retomada e interrupção por Ctrl-C. |
-| `depthtest` | Valida o limite de profundidade/quantidade de processos. |
-| `cwdtest` | Testa isolamento e herança do diretório atual entre pai, filho e exec. |
-| `budgettest` | Valida a renovação do orçamento de CPU durante esperas de terminal. |
-| `duptest` | Testa `dup`, streams padrão, herança, rollback e `close-on-exec`. |
-| `streams` | Escreve mensagens separadas em stdout e stderr. |
-| `pipetest` | Testa pipes, concorrência, bloqueio, preempção e memória privada. |
-| `storagecheck` | Executa verificações públicas de arquivos grandes, limites e persistência dekHFS. |
+| `hello` | Confirms execution of a C program in ring 3. |
+| `fault` | Attempts a kernel-text write; only the process should be terminated. |
+| `badptr` | Tests invalid pointers, sizes, descriptors, and unknown syscalls. |
+| `privileged` | Attempts privileged `cli` from ring 3. |
+| `spin` | Loops forever to test the three-second CPU limit. |
+| `textwrite` | Attempts to modify read-only executable text. |
+| `stackexec` | Attempts to execute code from the NX stack. |
+| `bss` | Verifies zero-filled BSS and writable data. |
+| `iotest` | Tests open/read offsets, descriptors, buffers, and ABI limits. |
+| `ttyread` | Tests nonblocking terminal input. |
+| `ucat` | Diagnostic implementation of the file/standard-input copy path used by `cat`. |
+| `argtest` | Tests `argc`, `argv`, empty arguments, quoting, and limits. |
+| `ucp` | Diagnostic implementation of the file/tree copy path used by `cp`. |
+| `writetest` | Tests create, write, truncate, append, and access errors. |
+| `copycheck A B` | Compares two files byte for byte. |
+| `uexec PROGRAM [ARGS]` | Replaces the current process image through `exec`. |
+| `exectest` | Tests exec validation, failure atomicity, and descriptor inheritance. |
+| `execinherit` | Verifies inherited offsets and close-on-exec. |
+| `execoom` | Tests exec rollback after frame exhaustion. |
+| `execchain [N]` | Runs a chain of up to twenty image replacements. |
+| `childtest` | Tests child status, isolation, faults, and resource recovery. |
+| `uspawn PROGRAM [ARGS]` | Spawns a child, waits, and prints its status. |
+| `waittest` | Tests blocking input, wakeup, and Ctrl-C interruption. |
+| `depthtest` | Verifies the process-depth/context limit. |
+| `cwdtest` | Tests working-directory inheritance and isolation across child and exec. |
+| `budgettest` | Tests CPU-budget renewal around terminal waits. |
+| `duptest` | Tests descriptor duplication, inheritance, rollback, and close-on-exec. |
+| `streams` | Writes separate messages to standard output and standard error. |
+| `pipetest` | Tests pipes, concurrency, blocking, preemption, and private memory. |
+| `storagecheck` | Runs public large-file, boundary, and dekHFS persistence checks. |
 
-## Limites importantes
+## Important limits
 
-- O sistema-base usa no máximo 256 entradas no dekHFS.
-- Cada arquivo do dekHFS v4 pode ter até 2 MiB; o pool compartilhado possui
-  16 MiB.
-- Editor, download, utilitários de texto e substituição atômica continuam
-  limitados a 64 KiB por operação/arquivo conforme o comando.
-- Os comandos FreeBSD experimentais não significam compatibilidade geral com
-  pacotes FreeBSD.
-- `pkg` e Vim ainda não estão disponíveis.
+- The base system supports at most 256 dekHFS entries.
+- A dekHFS v4 file may be up to 2 MiB, backed by a shared 16 MiB pool.
+- The editor, downloader, text utilities, and atomic replacement paths retain
+  their documented 64 KiB operation limits.
+- FreeBSD compatibility fixtures do not imply general FreeBSD package support.
+- `pkg` and Vim are not available yet.
