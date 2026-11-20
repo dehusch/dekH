@@ -235,3 +235,17 @@ are not yet supported. See [shared runtime scope and tests](docs/FREEBSD-SHARED-
 The same development fixture now includes dynamic `cp`, `mv`, `pwd`, `sleep`
 and `printf` with bounded rename, timed wait, signal-registration and terminal
 query support.
+It additionally includes unchanged FreeBSD `stty`, writable terminal
+attributes and a controlled shared-libc fixture that verifies asynchronous
+SIGINT delivery and `sigreturn`. See
+[the signal and terminal scope](docs/FREEBSD-SIGNALS-TERMINAL.md).
+The next development fixture runs unchanged FreeBSD `less` interactively with
+the real `libtinfow` and termcap data. It opens a file, renders a terminal
+screen, accepts `q` without Enter and restores terminal attributes. See
+[the bounded less milestone](docs/FREEBSD-LESS.md).
+The latest bounded follow-up runs unchanged FreeBSD `vi` and `ee` under their
+normal command names with the real `libncursesw`. `vi` edit/save, temporary
+cleanup, terminal restoration and reboot persistence pass; `ee` currently has
+read/exit coverage. This verified subset is installed in the primary
+`dekH-Lite-042` VM; the previous disk is retained for rollback. See
+[the editor milestone](docs/FREEBSD-EDITORS.md).
